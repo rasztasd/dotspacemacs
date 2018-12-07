@@ -3,6 +3,7 @@
 ;; It must be stored in your home directory.
 ;; (setq font-lock-maximum-decoration t)
 (setq exec-path-from-shell-debug t)
+(let ((private-init-el (expand-file-name "~/.emacs.d/private/private/private.init.el"))) (load private-init-el))
 ;; (global-unset-key (kbd "C-z"))
 (defun dotspacemacs/layers ()
   "Layer configuration:
@@ -103,6 +104,7 @@ This function should only modify configuration layer settings."
      groovy
      terraform
      c-c++
+     spotify
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -148,6 +150,7 @@ This function should only modify configuration layer settings."
                                       sublimity
                                       repo
                                       minimap
+                                      mustache-mode
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -499,6 +502,7 @@ before packages are loaded."
   (add-to-list 'auto-mode-alist '("Dockerfile*" . dockerfile-mode))
   (add-to-list 'auto-mode-alist '("\\.eclass$" . shell-script-mode))
   (add-to-list 'auto-mode-alist '("\\.ebuild$" . shell-script-mode))
+  (add-to-list 'auto-mode-alist '("\\ignition" . json-mode))
   (global-set-key (kbd "C-ő") 'evil-escape)
   (setq dotspacemacs-elpa-https nil)
   (global-set-key (kbd "C-<return>") 'evil-previous-line-first-non-blank)
@@ -635,7 +639,7 @@ This function is called at the very end of Spacemacs initialization."
  '(minimap-window-location (quote right))
  '(package-selected-packages
    (quote
-    (minimap web-completion-data auto-complete pos-tip powerline org-category-capture skewer-mode request-deferred websocket deferred js2-mode simple-httpd json-mode packed highlight undo-tree projectile avy hydra haml-mode flycheck eclim company smartparens evil yasnippet helm helm-core gh markdown-mode alert magit magit-popup git-commit with-editor async test-simple load-relative dash zeal-at-point yapfify yaml-tomato yaml-mode xterm-color xclip ws-butler winum which-key wgrep web-mode w3m volatile-highlights vi-tilde-fringe vagrant uuidgen use-package tox toc-org tagedit stickyfunc-enhance srefactor spray spaceline smeargle slim-mode shell-pop selectric-mode scss-mode sass-mode restart-emacs realgud ranger rainbow-delimiters pyvenv pytest pyenv-mode pycoverage py-isort pug-mode pip-requirements php-mode php+-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file on-screen neotree multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode gradle-mode google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy flycheck-pos-tip flx-ido firefox-controller fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein editorconfig dumb-jump dockerfile-mode docker diff-hl define-word cython-mode company-web company-statistics company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode camcorder auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (spotify helm-spotify-plus multi web-completion-data auto-complete pos-tip powerline org-category-capture skewer-mode request-deferred websocket deferred js2-mode simple-httpd json-mode packed highlight undo-tree projectile avy hydra haml-mode flycheck eclim company smartparens evil yasnippet helm helm-core gh markdown-mode alert magit magit-popup git-commit with-editor async test-simple load-relative dash zeal-at-point yapfify yaml-tomato yaml-mode xterm-color xclip ws-butler winum which-key wgrep web-mode w3m volatile-highlights vi-tilde-fringe vagrant uuidgen use-package tox toc-org tagedit stickyfunc-enhance srefactor spray spaceline smeargle slim-mode shell-pop selectric-mode scss-mode sass-mode restart-emacs realgud ranger rainbow-delimiters pyvenv pytest pyenv-mode pycoverage py-isort pug-mode pip-requirements php-mode php+-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file on-screen neotree multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode gradle-mode google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy flycheck-pos-tip flx-ido firefox-controller fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein editorconfig dumb-jump dockerfile-mode docker diff-hl define-word cython-mode company-web company-statistics company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode camcorder auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(perl-indent-level 2)
  '(revert-without-query (quote (".*")))
  '(safe-local-variable-values
