@@ -98,13 +98,17 @@ This function should only modify configuration layer settings."
      ;; version-control
      tabs
      ;; (go :variables go-use-gometalinter t)
-     go
+     ;; (go :variables go-backend 'lsp :variables go-use-golangci-lint t)
+     ;; (go 'lsp :variables go-use-golangci-lint t) rossz amúgy is
+     (go :variables go-backend 'lsp )
+     ;; go
      vagrant
      ruby
      groovy
      terraform
      c-c++
      spotify
+     lsp
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -113,6 +117,8 @@ This function should only modify configuration layer settings."
    dotspacemacs-additional-packages '(
                                       ;; (company-anaconda :location local)
                                       ;; (anaconda-mode :location local) ;;# not working what the duck
+                                      minimap
+                                      perfect-margin
                                       wgrep
                                       ;; php-mode
                                       ;; php+-mode
@@ -138,6 +144,7 @@ This function should only modify configuration layer settings."
                                       ;; vagrant
                                       ;; pycoverage
                                       realgud
+                                      company-box
                                       ;; tabbar
                                       ;; tabbar-ruler
                                       toml-mode
@@ -149,8 +156,11 @@ This function should only modify configuration layer settings."
                                       vagrant-tramp
                                       sublimity
                                       repo
-                                      minimap
                                       mustache-mode
+                                      exec-path-from-shell
+                                      go-dlv
+                                      dap-mode
+                                      ;; disable-mouse
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -231,6 +241,7 @@ It should only modify the values of Spacemacs settings."
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
+                         alect-dark
                          darkokai
                          kaolin-ocean
                          darktooth
@@ -252,18 +263,20 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
+   ;bla
+   dotspacemacs-default-font '("SourceCodePro"
                                :size 13
                                :weight normal
                                :width normal
-                               :powerline-scale 1.3)
+                               :powerline-scale 1.5)
+
    ;; dotspacemacs-default-font '("Monaco"
    ;;                             :size 13
    ;;                             :antialias nil
    ;;                             :weight normal
    ;;                             :width normal
    ;;                             :powerline-scale 1.1)
-   ;; dotspacemacs-default-font '("Monospace"
+   ;; dotspacemacs-default-font '("Liberation Serif"
    ;;                             :size 13
    ;;                             :antialias nil
    ;;                             :weight normal
@@ -520,7 +533,7 @@ before packages are loaded."
   (tabbar-ruler-group-by-projectile-project-and-group-fileless-buffers)
   (setq magit-revision-show-gravatars nil)
   (server-mode 1)
-  (load-library "realgud")
+  ;; (load-library "realgud")
 
   ;; go things
   (load "/home/mcallister/.emacs.d/private/protobuff/protobuf-mode.el")
@@ -534,7 +547,27 @@ before packages are loaded."
   ;; (require 'sublimity-map)
   ;; (sublimity-map-set-delay nil)
   ;; (sublimity-mode 1)
-  (setenv "GO" "/home/mcallister/src/coreroller/backend/src")
+  ;; (setenv "GO" "/home/mcallister/src/coreroller/backend/src")
+  ;; (require 'disable-mouse)
+  ;; (global-disable-mouse-mode)
+  (require 'minimap)
+  (require 'dap-go)
+  (require 'perfect-margin)
+  (perfect-margin-mode 1)
+  ;; (exec-path-from-shell-initialize)
+  ;; (exec-path-from-shell-getenv "PATH")
+  (setenv "PATH" (concat (getenv "PATH") ":/home/mcallister/go/bin"))
+  (setq exec-path (append exec-path '("/home/mcallister/go/bin")))
+  (dap-mode 1)
+  (dap-ui-mode 1)
+  ;; enables mouse hover support
+  (dap-tooltip-mode 1)
+  ;; use tooltips for mouse hover
+  ;; if it is not enabled `dap-mode' will use the minibuffer.
+  (tooltip-mode 1)
+  (require 'dap-go)
+  (dap-go-setup)
+  ;; (setq debug-on-error t)
   (message "ITS FIIIINE")
 )
 
@@ -564,13 +597,6 @@ before packages are loaded."
    (quote
     ("--graph" "--color" "--decorate" "--follow" "-n256")))
  '(make-backup-files nil)
- '(minimap-automatically-delete-window nil)
- '(minimap-dedicated-window t)
- '(minimap-highlight-line nil)
- '(minimap-mode t)
- '(minimap-recreate-window t)
- '(minimap-update-delay 0)
- '(minimap-window-location (quote right))
  '(package-selected-packages
    (quote
     (web-completion-data auto-complete pos-tip powerline org-category-capture skewer-mode request-deferred websocket deferred js2-mode simple-httpd json-mode packed highlight undo-tree projectile avy hydra haml-mode flycheck eclim company smartparens evil yasnippet helm helm-core gh markdown-mode alert magit magit-popup git-commit with-editor async test-simple load-relative dash zeal-at-point yapfify yaml-tomato yaml-mode xterm-color xclip ws-butler winum which-key wgrep web-mode w3m volatile-highlights vi-tilde-fringe vagrant uuidgen use-package tox toc-org tagedit stickyfunc-enhance srefactor spray spaceline smeargle slim-mode shell-pop selectric-mode scss-mode sass-mode restart-emacs realgud ranger rainbow-delimiters pyvenv pytest pyenv-mode pycoverage py-isort pug-mode pip-requirements php-mode php+-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file on-screen neotree multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode gradle-mode google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy flycheck-pos-tip flx-ido firefox-controller fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein editorconfig dumb-jump dockerfile-mode docker diff-hl define-word cython-mode company-web company-statistics company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode camcorder auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
@@ -596,9 +622,7 @@ before packages are loaded."
  ;; your init file should contain only one such instance.
  ;; if there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
- '(minimap-active-region-background ((t nil)))
- '(minimap-font-face ((t (:height 50 :family "dejavu sans mono")))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
 This is an auto-generated function, do not modify its content directly, use
@@ -630,16 +654,9 @@ This function is called at the very end of Spacemacs initialization."
    (quote
     ("--graph" "--color" "--decorate" "--follow" "-n256")))
  '(make-backup-files nil)
- '(minimap-automatically-delete-window nil)
- '(minimap-dedicated-window t)
- '(minimap-highlight-line nil)
- '(minimap-mode t)
- '(minimap-recreate-window t)
- '(minimap-update-delay 0)
- '(minimap-window-location (quote right))
  '(package-selected-packages
    (quote
-    (spotify helm-spotify-plus multi web-completion-data auto-complete pos-tip powerline org-category-capture skewer-mode request-deferred websocket deferred js2-mode simple-httpd json-mode packed highlight undo-tree projectile avy hydra haml-mode flycheck eclim company smartparens evil yasnippet helm helm-core gh markdown-mode alert magit magit-popup git-commit with-editor async test-simple load-relative dash zeal-at-point yapfify yaml-tomato yaml-mode xterm-color xclip ws-butler winum which-key wgrep web-mode w3m volatile-highlights vi-tilde-fringe vagrant uuidgen use-package tox toc-org tagedit stickyfunc-enhance srefactor spray spaceline smeargle slim-mode shell-pop selectric-mode scss-mode sass-mode restart-emacs realgud ranger rainbow-delimiters pyvenv pytest pyenv-mode pycoverage py-isort pug-mode pip-requirements php-mode php+-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file on-screen neotree multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode gradle-mode google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy flycheck-pos-tip flx-ido firefox-controller fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein editorconfig dumb-jump dockerfile-mode docker diff-hl define-word cython-mode company-web company-statistics company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode camcorder auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
+    (flycheck-gometalinter web-completion-data auto-complete pos-tip powerline org-category-capture skewer-mode request-deferred websocket deferred js2-mode simple-httpd json-mode packed highlight undo-tree projectile avy hydra haml-mode flycheck eclim company smartparens evil yasnippet helm helm-core gh markdown-mode alert magit magit-popup git-commit with-editor async test-simple load-relative dash zeal-at-point yapfify yaml-tomato yaml-mode xterm-color xclip ws-butler winum which-key wgrep web-mode w3m volatile-highlights vi-tilde-fringe vagrant uuidgen use-package tox toc-org tagedit stickyfunc-enhance srefactor spray spaceline smeargle slim-mode shell-pop selectric-mode scss-mode sass-mode restart-emacs realgud ranger rainbow-delimiters pyvenv pytest pyenv-mode pycoverage py-isort pug-mode pip-requirements php-mode php+-mode persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-download org-bullets open-junk-file on-screen neotree multi-term move-text mmm-mode markdown-toc magit-svn magit-gitflow magit-gh-pulls macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode info+ indent-guide hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag groovy-mode gradle-mode google-translate golden-ratio gnuplot github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy flycheck-pos-tip flx-ido firefox-controller fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein editorconfig dumb-jump dockerfile-mode docker diff-hl define-word cython-mode company-web company-statistics company-emacs-eclim company-anaconda column-enforce-mode clean-aindent-mode camcorder auto-yasnippet auto-highlight-symbol auto-compile adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell)))
  '(perl-indent-level 2)
  '(revert-without-query (quote (".*")))
  '(safe-local-variable-values
