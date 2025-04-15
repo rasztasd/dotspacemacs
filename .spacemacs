@@ -202,7 +202,7 @@ This function should only modify configuration layer settings."
                                       toml
                                       kubernetes
                                       kubernetes-evil
-                                      kubernetes-tramp
+                                      tramp-container
                                       timonier
                                       vagrant-tramp
                                       sublimity
@@ -815,6 +815,9 @@ before packages are loaded."
             (lambda ()
               (setq indent-tabs-mode 1)
               (setq tab-width 2)))
+  (add-hook 'company-mode-hook
+            (lambda ()
+              (define-key company-mode-map (kbd "C-SPC") 'company-complete)))
   ;; (golden-ratio-mode)
   (add-hook 'persp-mode-hook
             (lambda ()
