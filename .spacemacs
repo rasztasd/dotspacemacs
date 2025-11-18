@@ -39,7 +39,16 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(lua
+   '(autohotkey
+     (typescript :variables
+                 typescript-backend 'lsp
+                 ;; typescript-lsp-linter nil
+                 typescript-linter 'eslint
+                 typescript-fmt-tool 'prettier
+                 typescript-fmt-on-save t
+                 )
+     prettier
+     lua
      openai
      php
      protobuf
@@ -50,7 +59,8 @@ This function should only modify configuration layer settings."
      ;; typescript
      graphviz
      html
-     javascript
+     (javascript :variables
+                 javascript-backend 'lsp)
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
@@ -67,6 +77,8 @@ This function should only modify configuration layer settings."
      git
      markdown
      neotree
+     ;; (treemacs :variable
+     ;;           treemacs-use-follow-mode 'tag)
      ;; org
      (shell :variables
             shell-default-height 30
@@ -96,10 +108,12 @@ This function should only modify configuration layer settings."
      ;; gtags
      ;; (python :variables python-test-runner 'pytest python-backend 'anaconda)
      ;; (python :variables python-test-runner 'pytest python-backend 'lsp)
+     (vue :variables vue-backend 'lsp)
      (python :variables python-test-runner 'pytest
              ;; python-backend 'lsp python-lsp-server 'mspyls
-             python-backend 'anaconda
-             python-lsp-git-root "~/src/python-language-server"
+             ;; python-backend 'anaconda
+             python-backend 'lsp
+             ;; python-lsp-git-root "~/src/python-language-server"
              lsp-ui-doc-enable nil)
      ;; ipython-notebook
      dash
@@ -112,7 +126,6 @@ This function should only modify configuration layer settings."
              ranger-show-preview t)
      selectric
      yaml
-     imenu-list
      bm
      fasd
      themes-megapack
@@ -131,7 +144,11 @@ This function should only modify configuration layer settings."
      ;; (go :variables go-backend 'go-mode godoc-at-point-function 'godoc-gogetdoc :variables go-backend 'lsp)
      ;; go
      ;; (go :variables go-backend 'go-mode :variables godoc-at-point-function 'godoc-gogetdoc)
-     (go :variables go-backend 'lsp)
+     (go
+      :variables
+      go-backend 'lsp
+      go-format-before-save t
+      )
      ;; (go :variables go-backend 'go-mode godoc-at-point-function 'godoc-gogetdoc)
      ;; (go :variables go-backend 'lsp)
      (java :variables java-backend 'meghanada)
@@ -153,7 +170,7 @@ This function should only modify configuration layer settings."
      spotify
                                         ;lsp
      (lsp :variables lsp-enable-indentation nil)
-     tabs
+     (tabs :variables hide)
      ;; (tabs :variables tabs-highlight-current-tab 'left)
      )
 
@@ -202,7 +219,7 @@ This function should only modify configuration layer settings."
                                       toml
                                       kubernetes
                                       kubernetes-evil
-                                      tramp-container
+                                      ;; tramp-container
                                       timonier
                                       vagrant-tramp
                                       sublimity
@@ -213,6 +230,10 @@ This function should only modify configuration layer settings."
                                       dap-mode
                                       sqlite3
                                       all-the-icons
+                                      jest
+                                      mongo
+                                      ;; (vue-mode :variables vue-backend 'lsp)
+                                      ;; vue-html-mode
                                       ;; eglot
 
                                       ;; centaur-tabs
@@ -420,7 +441,7 @@ It should only modify the values of Spacemacs settings."
    ;; a non-negative integer (pixel size), or a floating-point (point size).
    ;; Point size is recommended, because it's device independent. (default 10.0)
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 10.0
+                               :size 13.0
                                :weight normal
                                :width normal)
    syntax-checking-enable-by-default t
@@ -777,6 +798,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (global-set-key (kbd "C-M-7") 'spacemacs/eyebrowse-switch-to-window-config-7)
   (global-set-key (kbd "C-M-8") 'spacemacs/eyebrowse-switch-to-window-config-8)
   (global-set-key (kbd "C-M-9") 'spacemacs/eyebrowse-switch-to-window-config-9)
+  ;; (set-frame-parameter nil 'undecorated t)
 
   ;; (exec-path-from-shell-copy-env "GOPATH")
   ;; (exec-path-from-shell-copy-env "GOROOT")
@@ -825,6 +847,13 @@ before packages are loaded."
               (persp-switch "Default")))
   (global-set-key (kbd "M-p") 'spacemacs/tabs-backward)
   (global-set-key (kbd "M-n") 'spacemacs/tabs-forward)
+  (defun my-vue-mode-hook ()
+    (setq web-mode-markup-indent-offset 2) ; HTML inside <template>
+    (setq web-mode-code-indent-offset 2)   ; JS/JSX inside <script>
+    (setq web-mode-css-indent-offset 2)    ; CSS inside <style>
+    (setq js-indent-level 2)               ; JS in general
+    (setq css-indent-offset 2))
+
   (spacemacs/toggle-vi-tilde-fringe-off)
   ;; (spacemacs/toggle-semantic-stickyfunc-globally-off)
   ;; tmp commented
@@ -866,6 +895,7 @@ before packages are loaded."
   ;; (global-set-key (kbd "C-<escape>") 'spacemacs/kill-this-buffer)
   ;; (global-set-key (kbd "C-S-k") (lambda ()(interactive)(spacemacs/delete-window) (spacemacs/kill-this-buffer))) //better version is needed
   (global-set-key (kbd "C-S-k") 'kill-buffer)
+  (global-set-key (kbd "C-S-o") 'browse-url-with-browser-kind)
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
   (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
   (setq mouse-wheel-follow-mouse nil)
@@ -1016,6 +1046,8 @@ before packages are loaded."
   (setq-default dotspacemacs-line-numbers t)
   ;; (setenv "GOROOT" "/home/mcallister/.gvm/gos/go1.18")
   (setq helm-ag-use-grep-ignore-list nil)
+  (setq helm-swoop-pre-input-function (lambda () ""))
+  (setq magit-status-show-untracked 'subdir)
   (message "ITS FIIIINE")
   )
 
@@ -1083,9 +1115,9 @@ This function is called at the very end of Spacemacs initialization."
    ;; If you edit it by hand, you could mess it up, so be careful.
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
-   '(ac-auto-start 1 t)
+   '(ac-auto-start 1)
    '(c-basic-offset 4)
-   '(c-offsets-alist '((substatement-open . +) (case-label . 0)))
+   '(c-offsets-alist '((substatement-open . 0) (case-label . +)))
    '(column-number-mode t)
    '(custom-safe-themes
      '("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879"
@@ -1098,84 +1130,64 @@ This function is called at the very end of Spacemacs initialization."
        "38908037082b9fc2e6762961026299d026963e57c726c3bc0b9e66cd0def0926"
        "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))
    '(ediff-split-window-function 'split-window-horizontally t)
-   '(evil-want-Y-yank-to-eol nil)
    '(gdb-many-windows t)
-   '(go-tab-width 4)
-   '(helm-buffer-max-length nil)
    '(indent-tabs-mode nil)
    '(inhibit-startup-screen t)
    '(jde-jdk-registry '(("1.7" . "/usr/lib/jvm/java-7-openjdk-amd64")))
    '(jde-junit-testrunner-type "org.junit.runner.junitcore")
    '(jde-run-option-application-args '(""))
    '(jdee-server-dir "/home/rasztasd/bin/ecj")
+   '(js-indent-level 2)
    '(large-file-warning-threshold nil)
    '(line-number-mode t)
    '(magit-log-arguments '("--graph" "--color" "--decorate" "--follow" "-n256"))
    '(make-backup-files nil)
-   '(nginx-indent-level 2)
    '(package-selected-packages
-     '(company-lua counsel-gtags counsel swiper ivy ggtags lua-mode
-                   web-completion-data auto-complete pos-tip powerline
-                   org-category-capture skewer-mode request-deferred websocket
-                   deferred js2-mode simple-httpd json-mode packed highlight
-                   undo-tree projectile avy hydra haml-mode flycheck eclim company
-                   smartparens evil yasnippet helm helm-core gh markdown-mode
-                   alert magit magit-popup git-commit with-editor async
-                   test-simple load-relative dash zeal-at-point yapfify
-                   yaml-tomato yaml-mode xterm-color xclip ws-butler winum
-                   which-key wgrep web-mode w3m volatile-highlights
-                   vi-tilde-fringe vagrant uuidgen use-package tox toc-org tagedit
-                   stickyfunc-enhance srefactor spray spaceline smeargle slim-mode
-                   shell-pop selectric-mode scss-mode sass-mode restart-emacs
-                   realgud ranger rainbow-delimiters pyvenv pytest pyenv-mode
-                   pycoverage py-isort pug-mode pip-requirements php-mode
-                   php+-mode persp-mode pcre2el paradox orgit org-projectile
-                   org-present org-pomodoro org-download org-bullets
-                   open-junk-file on-screen neotree multi-term move-text mmm-mode
-                   markdown-toc magit-svn magit-gitflow magit-gh-pulls macrostep
-                   lorem-ipsum live-py-mode linum-relative link-hint less-css-mode
-                   info+ indent-guide hy-mode hungry-delete htmlize hl-todo
-                   highlight-parentheses highlight-numbers highlight-indentation
-                   hide-comnt help-fns+ helm-themes helm-swoop helm-pydoc
-                   helm-projectile helm-mode-manager helm-make helm-gitignore
-                   helm-flx helm-descbinds helm-dash helm-css-scss helm-company
-                   helm-c-yasnippet helm-ag groovy-mode gradle-mode
-                   google-translate golden-ratio gnuplot github-search
-                   github-clone github-browse-file gitconfig-mode
-                   gitattributes-mode git-timemachine git-messenger git-link
-                   git-gutter-fringe git-gutter-fringe+ gist gh-md fuzzy
-                   flycheck-pos-tip flx-ido firefox-controller
-                   fill-column-indicator fancy-battery eyebrowse expand-region
-                   exec-path-from-shell evil-visualstar evil-visual-mark-mode
-                   evil-unimpaired evil-tutor evil-surround
-                   evil-search-highlight-persist evil-numbers evil-nerd-commenter
-                   evil-mc evil-matchit evil-magit evil-lisp-state
-                   evil-indent-plus evil-iedit-state evil-exchange evil-escape
-                   evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z
-                   eshell-prompt-extras esh-help emmet-mode elisp-slime-nav ein
-                   editorconfig dumb-jump dockerfile-mode docker diff-hl
-                   define-word cython-mode company-web company-statistics
-                   company-emacs-eclim company-anaconda column-enforce-mode
-                   clean-aindent-mode camcorder auto-yasnippet
-                   auto-highlight-symbol auto-compile adaptive-wrap ace-window
-                   ace-link ace-jump-helm-line ac-ispell))
-   '(paradox-github-token t)
+     '(ac-ispell ace-jump-helm-line ace-link ace-window adaptive-wrap ahk-mode alert
+                 async auto-compile auto-complete auto-highlight-symbol
+                 auto-yasnippet avy camcorder clean-aindent-mode
+                 column-enforce-mode company company-anaconda company-emacs-eclim
+                 company-statistics company-web cython-mode dash deferred
+                 define-word diff-hl docker dockerfile-mode dumb-jump eclim
+                 editorconfig ein elisp-slime-nav emmet-mode esh-help
+                 eshell-prompt-extras eshell-z eval-sexp-fu evil evil-anzu
+                 evil-args evil-ediff evil-escape evil-exchange evil-iedit-state
+                 evil-indent-plus evil-lisp-state evil-magit evil-matchit evil-mc
+                 evil-nerd-commenter evil-numbers evil-search-highlight-persist
+                 evil-surround evil-tutor evil-unimpaired evil-visual-mark-mode
+                 evil-visualstar exec-path-from-shell expand-region eyebrowse
+                 fancy-battery fill-column-indicator firefox-controller flx-ido
+                 flycheck flycheck-pos-tip fuzzy gh gh-md gist git-commit
+                 git-gutter-fringe git-gutter-fringe+ git-link git-messenger
+                 git-timemachine gitattributes-mode gitconfig-mode
+                 github-browse-file github-clone github-search gnuplot
+                 golden-ratio google-translate gradle-mode groovy-mode haml-mode
+                 helm helm-ag helm-c-yasnippet helm-company helm-core
+                 helm-css-scss helm-dash helm-descbinds helm-flx helm-gitignore
+                 helm-make helm-mode-manager helm-projectile helm-pydoc helm-swoop
+                 helm-themes help-fns+ hide-comnt highlight highlight-indentation
+                 highlight-numbers highlight-parentheses hl-todo htmlize
+                 hungry-delete hy-mode hydra indent-guide info+ js2-mode json-mode
+                 less-css-mode link-hint linum-relative live-py-mode load-relative
+                 lorem-ipsum macrostep magit magit-gh-pulls magit-gitflow
+                 magit-popup magit-svn markdown-mode markdown-toc mmm-mode
+                 move-text multi-term neotree on-screen open-junk-file org-bullets
+                 org-category-capture org-download org-pomodoro org-present
+                 org-projectile orgit packed paradox pcre2el persp-mode php+-mode
+                 php-mode pip-requirements pos-tip powerline projectile pug-mode
+                 py-isort pycoverage pyenv-mode pytest pyvenv rainbow-delimiters
+                 ranger realgud request-deferred restart-emacs sass-mode scss-mode
+                 selectric-mode shell-pop simple-httpd skewer-mode slim-mode
+                 smartparens smeargle spaceline spray srefactor stickyfunc-enhance
+                 tagedit test-simple toc-org tox undo-tree use-package uuidgen
+                 vagrant vi-tilde-fringe volatile-highlights w3m
+                 web-completion-data web-mode websocket wgrep which-key winum
+                 with-editor ws-butler xclip xterm-color yaml-mode yaml-tomato
+                 yapfify yasnippet zeal-at-point))
    '(perl-indent-level 2)
-   '(projectile-project-root-files
-     '("dune-project" "pubspec.yaml" "info.rkt" "Cargo.toml" "stack.yaml"
-       "DESCRIPTION" "Eldev" "Cask" "shard.yml" "Gemfile" ".bloop" "deps.edn"
-       "build.boot" "project.clj" "build.sc" "build.sbt" "application.yml"
-       "gradlew" "build.gradle" "pom.xml" "poetry.lock" "Pipfile" "tox.ini"
-       "setup.py" "requirements.txt" "manage.py" "angular.json" "package.json"
-       "gulpfile.js" "Gruntfile.js" "mix.exs" "rebar.config" "composer.json"
-       "Taskfile.yml" "CMakeLists.txt" "GNUMakefile" "Makefile" "debian/control"
-       "WORKSPACE" "flake.nix" "default.nix" "meson.build" "SConstruct" "?*.sln"
-       "?*.fsproj" "?*.csproj" "GTAGS" "TAGS" "configure.ac" "configure.in"
-       "cscope.out" "go.mod"))
-   '(projectile-project-root-files-bottom-up
-     '("vendor" "go.mod" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".pijul"
-       "vendor" "go.mod"))
    '(revert-without-query '(".*"))
+   '(safe-local-variable-directories
+     '("/home/mcallister/src/speech-graphics/sgnp-rapport-accounts-frontend/"))
    '(safe-local-variable-values
      '((eval pyvenv-workon "worflows_py27") (eval venv-workon "worflows_py27")))
    '(scroll-bar-mode nil)
@@ -1187,6 +1199,7 @@ This function is called at the very end of Spacemacs initialization."
    '(tab-width 2)
    '(tags-case-fold-search nil)
    '(tags-revert-without-query t)
+   '(typescript-indent-level 2)
    '(which-function-mode t))
   (custom-set-faces
    ;; custom-set-faces was added by Custom.
@@ -1194,12 +1207,5 @@ This function is called at the very end of Spacemacs initialization."
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
    '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
-   '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil))))
-   '(minimap-active-region-background ((t nil)))
-   '(minimap-font-face ((t (:height 50 :family "dejavu sans mono")))))
+   '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
   )
-(custom-set-faces
- '(company-tooltip-common
-   ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection
-   ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
